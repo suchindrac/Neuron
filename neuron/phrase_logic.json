@@ -1,0 +1,33 @@
+{
+    "connector definitions":
+    {
+        "situated at": {"type": "place", "next_is": "noun", "is_a": "verb"},
+        "had been": {"tense": "past_tense", "next_is": ["noun", "verb"], "is_a": "verb"},
+        "in front of": {"type": "location", "next_is": "noun"},
+        "by using": {"type": "mode of transport", "next_is": "noun", "is_a": "verb"},
+        "once every": {"type": "frequency", "next_is": "noun"},
+        "will be": {"type": "future_tense", "next_is": "verb"},
+        "owned by": {"type": "ownership", "next_is": "noun", "is_a": "verb"},
+        "I": {"type": "person", "next_is": ["noun", "verb"], "is_a": "noun"}, 
+        "will": {"type": "future_tense", "next_is": "verb", "is_a": "verb"},
+        "is_a": {"tense": "present_tense", "next_is": ["noun", "verb"]},
+        "been": {"type": "continuous", "next_is": "verb", "is_a": "verb"},
+        "at": {"type": "place", "next_is": "noun"},
+        "in": {"type": "location", "next_is": "noun"},
+        "by": {"type": "mode of transport", "next_is": "noun"},
+        "every": {"type": "frequency", "next_is": "noun"},
+        "to": {"type": "place", "next_is": "noun", "is_a": "verb"},
+        "on": {"type": "time", "next_is": ["verb", "noun"]},
+        "from": {"type": ["place", "time"], "next_is": "noun"},
+        "for": {"type": "person", "next_is": "noun"},
+        "go to that": {"type": "place", "tense": "present_tense", "is_a": "verb",
+                       "next_is": "noun"},
+        "was": {"type": "plan", "tense": "past_tense", "next_is": ["verb", "noun"]},
+        "of": {"type": "belonging", "next_is": ["verb", "noun"]},
+        "feel like": {"type": "desire", "next_is": ["verb", "noun"], "is_a": "verb"},
+        "and": {"type": "separator", "next_is": ["verb", "noun"]},
+        "before": {"type": "time", "next_is": ["verb", "noun"]},
+        "after": {"type": "time", "next_is": ["verb", "noun"]},
+        "now": {"type": "time", "next_is": []}
+    }
+}

@@ -31,12 +31,14 @@ def process(node_map):
 
             node_map.cleanup_neurons()
             set_root_verbs(node_map)
-            verb_nodes, noun_nodes, pairs = get_verbs_and_nouns(node_map)
-            verb_nodes = set_of(verb_nodes)
+            verb_nodes, noun_nodes = get_verbs_and_nouns(node_map)
+            
+            # verb_nodes = set_of(verb_nodes)
             noun_nodes = set(noun_nodes)
-
+            
             node_map.verb_nodes = verb_nodes
             node_map.noun_nodes = noun_nodes
+            
             node_map.connect_verbs_and_nouns(verb_nodes, noun_nodes)
             # node_map.correct_nodes()
 

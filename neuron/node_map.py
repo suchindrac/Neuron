@@ -16,15 +16,17 @@ class NodeMap:
         self.verb_nodes = []
         self.noun_nodes = []
         
-        fd = open('phrase_logic.txt', 'r')
+        fd = open('phrase_logic.json', 'r')
         ph_dict = fd.read()
         ph_dict = json.loads(ph_dict)
         fd.close()
 
+        ph_dict = ph_dict["connector definitions"]
+        
         for ph in ph_dict.keys():
             ph_o = PlaceHolder(ph)
-            for flag in ph_dict[ph]:
-                setattr(ph_o, flag, True)
+            for (flag_key, flag_value) in ph_dict[ph].items():
+                setattr(ph_o, flag_key, flag_value)
                 self.place_holders[ph] = ph_o
 
     def get_km_node(self, key):
@@ -89,6 +91,7 @@ class NodeMap:
         for key in self.get_km_keys():
             if self.key_map[key].value == []:
                 rem = self.key_map.pop(key)
+                print(f"Key {key} with value {rem} cleaned")
 
     def create_neurons(self, ph_data):
         prev_keys = self.get_km_keys()
@@ -104,24 +107,33 @@ class NodeMap:
             if ph_data[key] in prev_values:
                 continue
             
-            value = ph_data[key]
-      
-            n = Neuron(value)
-            ph_o = self.place_holders[key]
             
             #
             # Set the place holder flags for neuron
             #
             
-            for k in ph_o.__dict__:
-                v = ph_o.__dict__[k]
+            if key in self.place_holders.keys():
+                value = ph_data[key]
 
-                setattr(n, k, v)
-            root_verb = find_root_verb(self, key)
-            setattr(n, 'root_verb', root_verb)
-            setattr(n, 'value', value)
-            if value != [] and value[0] != "":
-                self.key_map[key] = n
+                n = Neuron(key)
+                ph_o = self.place_holders[key]
+                
+                for k in ph_o.__dict__:
+                    v = ph_o.__dict__[k]
+                    setattr(n, k, v)
+                
+                root_verb = find_root_verb(self, key)
+                setattr(n, 'root_verb', root_verb)
+                setattr(n, 'value', value)
+
+                try:
+                    is_a = getattr(n, 'is_a')
+                except AttributeError:
+                    setattr(n, 'is_a', "not known")
+                    
+                if value != [] and value[0] != "":
+                    # print(f"Node {key} with value {value} added")
+                    self.key_map[key] = n
             
     def connect_verbs_and_nouns(self, verb_nodes, noun_nodes):
         for node in verb_nodes:
@@ -130,9 +142,7 @@ class NodeMap:
         for node in noun_nodes:
             node.conn_verbs = []
             node.conn_nouns = []
-
         for verb_node in verb_nodes:
             for noun_node in noun_nodes:
-                
                 verb_node.conn_nouns.append(noun_node)
                 noun_node.conn_verbs.append(verb_node)

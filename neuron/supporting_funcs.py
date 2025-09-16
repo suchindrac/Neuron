@@ -88,6 +88,8 @@ def read_remaining(sentence, cur_word):
    
     if len(parts) > 1:
         return parts[1]
+    else:
+        return False
 
 def identify_extra_words(node_map, sentence_orig):
     sorted_phs = sorted(node_map.get_ph_keys(), key=lambda x: len(x), reverse=True)
@@ -105,9 +107,8 @@ def set_of(nodes):
     node_values = []
     nodes_new = []
     for node in nodes:
-        # print(f"Node value set_of: {node.text} {node.value}")
+        # print(f"{node.value} {node_values}")
         if node.value not in node_values:
-            # print(f"Node value set_of: {node.text} {node.value}")
             node_values.append(node.value)
             nodes_new.append(node)
 
@@ -127,20 +128,51 @@ def add_extra_words(node_map, extra_words):
             continue
         # print(f"Extra word: {extra_word}")
         n = Neuron(extra_word)
-        
+
+        ph_keys = node_map.place_holders.keys()
+        if extra_word in ph_keys:
+            ph_node = node_map.place_holders[extra_word]
+            for k in ph_node.__dict__:
+                v = getattr(ph_node, k)
+                setattr(n, k, v)
+
+        n.next_is = ["noun", "verb"]
+
         if extra_word in node_map.verbs:
-            n.is_verb = True
+            n.is_a = "verb"
             n.root_verb = find_root_verb(node_map, extra_word)
         elif extra_word in node_map.nouns:
-            n.is_noun = True
-            n.person = True
+            n.is_a = "noun"
+            n.type_of = "person"
         else:
-            n.is_noun = True
-
+            n.type_of = "noun"
+            n.is_a = "noun"
+            
         n.value = [extra_word]
         n.text = extra_word
-
+        
         node_map.key_map[extra_word] = n
+
+def inside(big, small, part=False):
+    if small in big:
+        return True
+    if small == big:
+        return True
+    if part:
+        part_of = False
+        for b in big:
+            if small in b:
+                part_of = True
+                break
+        return part_of
+    
+    return False
+
+def is_next_noun(node):
+    return inside(node.next_is, "noun")
+
+def is_next_verb(node):
+    return inside(node.next_is, "verb")
 
 def get_verbs_and_nouns(node_map):
     verb_nodes = []
@@ -151,25 +183,34 @@ def get_verbs_and_nouns(node_map):
         node = node_map.get_km_node(key)
         value = node.value
 
-        if node.next_is_verb and (value in node_map.verbs):
-            verb_nodes.append(node)
-        elif node.next_is_noun:
-            noun_nodes.append(node)
-        elif node.is_verb:
-            # print(f"Verb node: {node.text}")
-            verb_nodes.append(node)
-        elif key in node_map.verbs:
-            verb_nodes.append(node)
-        elif node.is_noun:
-            noun_nodes.append(node)
+        check_sets = [(key in node_map.verbs, verb_nodes.append(node)),
+                      (value in node_map.verbs, noun_nodes.append(node)),
+                      (key in node_map.nouns, noun_nodes.append(node)),
+                      (value in node_map.nouns, noun_nodes.append(node)),
+                      (is_next_verb(node) and value in node_map.verbs, verb_nodes.append(node)),
+                      (is_next_noun(node), noun_nodes.append(node))]
 
-        if node.is_verb:
-            pairs.append((node.text, node.value))
-
-    # print(f"Verb nodes: {[x.text for x in verb_nodes]}")
+        for cs in check_sets:
+            check = cs[0]
+            cset = str(cs[1])
+            
+            if check:
+                eval(cset)
+             
+    
     verb_nodes = set(verb_nodes)
     
-    return verb_nodes, noun_nodes, pairs
+    verb_nodes = cleanup_verbs(node_map, verb_nodes)
+    # print(f"Verb nodes: {[(x.text, x.value) for x in verb_nodes]}")
+    return verb_nodes, noun_nodes
+
+def cleanup_verbs(node_map, verb_nodes):
+    verb_nodes = [x for x in verb_nodes if x.value != []]
+    verb_nodes = [x for x in verb_nodes if len(x.value[0]) != 0]
+    # print(f"{[(x.text, x.value) for x in verb_nodes if x.value[0] in node_map.verbs]}")
+    verb_nodes = [x for x in verb_nodes if x.value[0] in node_map.verbs]
+    
+    return verb_nodes
 
 def set_root_verbs(node_map):
     for key in node_map.get_km_keys():
