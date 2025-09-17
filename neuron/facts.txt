@@ -1,5 +1,0 @@
-We won't get connections if they are not created -> This happens when only nouns are stored as nodes
-We store Jayanagar as a noun now
-We store only pizza, delivery and place, instead of 'pizza delivery place' as part of ph_data now
-We don't connect all verbs created till now with all nouns created till now
- We just do that connection on the basis of individual sentences
