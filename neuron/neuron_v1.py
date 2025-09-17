@@ -21,7 +21,7 @@ def process(node_map):
             words = sentence_orig.split(" ")
 
             phs_map = create_ph_map(node_map, sentence_orig)
-            node_map.create_neurons(phs_map)
+            node_map.create_neurons_from_text(phs_map)
             # node_map.print_km_data()
             # node_map.print_ph_data()
             extra_words = identify_extra_words(node_map, sentence_orig)

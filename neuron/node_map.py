@@ -93,7 +93,7 @@ class NodeMap:
                 rem = self.key_map.pop(key)
                 print(f"Key {key} with value {rem} cleaned")
 
-    def create_neurons(self, ph_data):
+    def create_neurons_from_text(self, ph_data):
         prev_keys = self.get_km_keys()
         prev_values = [self.key_map[x].value for x in prev_keys]
         # print(ph_data)
