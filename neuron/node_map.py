@@ -29,6 +29,13 @@ class NodeMap:
                 setattr(ph_o, flag_key, flag_value)
                 self.place_holders[ph] = ph_o
 
+    def get_node_by_uuid(self, uuid):
+        for node in self.key_map.values():
+            if node.uuid == uuid:
+                return node
+
+        return False
+    
     def get_km_node(self, key):
         return self.key_map[key]
 
@@ -74,7 +81,7 @@ class NodeMap:
 
             for value in values:
                 conn_nouns = node.conn_nouns
-                to_print = f"<{text}> with root verb "
+                to_print = f"<{node.text}> with root verb "
                 to_print += f"<{node.root_verb}> is connected to:\n"
                 cns_to_display = []
                 for x in conn_nouns:
@@ -107,11 +114,9 @@ class NodeMap:
             if ph_data[key] in prev_values:
                 continue
             
-            
             #
             # Set the place holder flags for neuron
-            #
-            
+            #            
             if key in self.place_holders.keys():
                 value = ph_data[key]
 
@@ -121,9 +126,10 @@ class NodeMap:
                 for k in ph_o.__dict__:
                     v = ph_o.__dict__[k]
                     setattr(n, k, v)
-                
+
                 root_verb = find_root_verb(self, key)
-                setattr(n, 'root_verb', root_verb)
+                if root_verb:
+                    setattr(n, 'root_verb', root_verb)
                 setattr(n, 'value', value)
 
                 try:

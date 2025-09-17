@@ -1,6 +1,13 @@
+import random
+import string
+
+def get_random_string(size=20):
+    return "".join(random.choice(string.ascii_lowercase) for i in range(size))
+
 class Neuron:
     def __init__(self, text):
-        self.text = text        
+        self.text = text
+        self.uuid = get_random_string()
         self.next_is_noun = False
         self.next_is_verb = False
         self.next_is_noun_or_verb = False        

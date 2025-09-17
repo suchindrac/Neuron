@@ -6,7 +6,7 @@ from neuron_class import *
 from place_holder import *
 
 def find_root_verb(node_map, verb):
-    root_verb = None
+    root_verb = False
     for verb_line in node_map.verbs_detailed:
         if verb in verb_line:
             root_verb = verb_line[0]
