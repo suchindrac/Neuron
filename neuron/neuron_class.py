@@ -28,3 +28,4 @@ class Neuron:
         self.action = False
         self.root_verb = None
         self.conn_nouns = []
+        self.conn_verbs = []

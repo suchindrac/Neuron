@@ -194,7 +194,6 @@ def get_verbs_and_nouns(node_map):
         for cs in check_sets:
             check = cs[0]
             cset = str(cs[1])
-            
             if check:
                 eval(cset)
              

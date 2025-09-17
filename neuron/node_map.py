@@ -142,12 +142,6 @@ class NodeMap:
                     self.key_map[key] = n
             
     def connect_verbs_and_nouns(self, verb_nodes, noun_nodes):
-        for node in verb_nodes:
-            node.conn_nouns = []
-
-        for node in noun_nodes:
-            node.conn_verbs = []
-            node.conn_nouns = []
         for verb_node in verb_nodes:
             for noun_node in noun_nodes:
                 verb_node.conn_nouns.append(noun_node)
