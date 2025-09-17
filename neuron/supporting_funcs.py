@@ -183,10 +183,11 @@ def get_verbs_and_nouns(node_map):
         node = node_map.get_km_node(key)
         value = node.value
 
-        check_sets = [(key in node_map.verbs, verb_nodes.append(node)),
-                      (value in node_map.verbs, noun_nodes.append(node)),
+        check_sets = [
+                      (key in node_map.verbs, verb_nodes.append(node)),
+                      # (value in node_map.verbs, noun_nodes.append(node)),
                       (key in node_map.nouns, noun_nodes.append(node)),
-                      (value in node_map.nouns, noun_nodes.append(node)),
+                      # (value in node_map.nouns, noun_nodes.append(node)),
                       (is_next_verb(node) and value in node_map.verbs, verb_nodes.append(node)),
                       (is_next_noun(node), noun_nodes.append(node))]
 
