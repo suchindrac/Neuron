@@ -127,11 +127,13 @@ class NodeMap:
 
             if key in prev_keys:
                 prev_node = self.key_map[key]
+                debug_print(f"Found node {prev_node.text} with key {key}") 
                 self.cur_neurons.append(prev_node)
                 continue
 
             if ph_data[key] in prev_values:
                 prev_node = self.get_node_from_value(ph_data[key])
+                debug_print(f"Found node {prev_node.text} with value {key}")
                 self.cur_neurons.append(prev_node)
                 continue
             
@@ -164,8 +166,11 @@ class NodeMap:
                     self.cur_neurons.append(n)
                     
     def connect_verbs_and_nouns(self):
-        for verb_node in self.verb_nodes:
-            for noun_node in self.noun_nodes:
+        verb_nodes = [x for x in self.cur_neurons if x.root_verb != None]
+        noun_nodes = [x for x in self.cur_neurons if x.root_verb == None]
+        
+        for verb_node in verb_nodes:
+            for noun_node in noun_nodes:
                 debug_print(f"Connecting {verb_node.text} with {noun_node.text}")
                 verb_node.conn_nouns.append(noun_node)
                 noun_node.conn_verbs.append(verb_node)
