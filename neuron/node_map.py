@@ -5,6 +5,7 @@ import copy
 from supporting_funcs import *
 from neuron_class import *
 from place_holder import *
+from printing import *
 
 class NodeMap:
     def __init__(self, verbs, verbs_d, nouns):
@@ -15,6 +16,8 @@ class NodeMap:
         self.place_holders = {}
         self.verb_nodes = []
         self.noun_nodes = []
+        self.neurons = []
+        self.cur_neurons = []
         
         fd = open('phrase_logic.json', 'r')
         ph_dict = fd.read()
@@ -43,16 +46,16 @@ class NodeMap:
         return self.key_map.pop(key)
         
     def print_km_data(self):
-        print("Key map data:")
+        debug_print("Key map data:")
         for key in self.get_km_keys():
             node = self.get_km_node(key)
-            print(f"{key}")
+            debug_print(f"{key}")
 
     def print_ph_data(self):
-        print("Place holder data:")
+        debug_print("Place holder data:")
         for key in self.get_ph_keys():
             node = self.get_ph_value(key)
-            print(f"{key} -> {node.__dict__}")
+            debug_print(f"{key} -> {node.__dict__}")
             
     def get_km_keys(self):
         return list(self.key_map.keys())
@@ -73,9 +76,8 @@ class NodeMap:
             return False
 
     def display(self):
-        print("The following nodes are created:")
+        print("The following connections are created:")
         for node in self.verb_nodes:
-            # print(f"Verb node: {node.value}")
             text = node.text
             values = node.value
 
@@ -98,12 +100,13 @@ class NodeMap:
         for key in self.get_km_keys():
             if self.key_map[key].value == []:
                 rem = self.key_map.pop(key)
-                print(f"Key {key} with value {rem} cleaned")
+                debug_print(f"Key {key} with value {rem} cleaned")
 
     def create_neurons_from_text(self, ph_data):
         prev_keys = self.get_km_keys()
         prev_values = [self.key_map[x].value for x in prev_keys]
-        # print(ph_data)
+        debug_print(f"Place holder data: {ph_data}")
+        
         for key in ph_data.keys():
             if ph_data[key] == "":
                 continue
@@ -138,11 +141,11 @@ class NodeMap:
                     setattr(n, 'is_a', "not known")
                     
                 if value != [] and value[0] != "":
-                    # print(f"Node {key} with value {value} added")
+                    debug_print(f"Node {key} with value {value} added")
                     self.key_map[key] = n
-            
-    def connect_verbs_and_nouns(self, verb_nodes, noun_nodes):
-        for verb_node in verb_nodes:
-            for noun_node in noun_nodes:
+
+    def connect_verbs_and_nouns(self):
+        for verb_node in self.verb_nodes:
+            for noun_node in self.noun_nodes:
                 verb_node.conn_nouns.append(noun_node)
                 noun_node.conn_verbs.append(verb_node)

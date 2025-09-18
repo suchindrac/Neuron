@@ -44,7 +44,7 @@ def display_tooltip(event):
         
 if __name__ == "__main__":
     root = tk.Tk()
-    canvas = tk.Canvas(root, width=800, height=800, bg="yellow")
+    canvas = tk.Canvas(root, width=800, height=800, bg="blue")
     canvas.pack()
 
     root.bind("<Button-1>", display_tooltip)
@@ -53,13 +53,16 @@ if __name__ == "__main__":
     with open("node_map.pkl", "rb") as fd:
         node_map = pickle.load(fd)
 
-    disp_nodes = node_map.verb_nodes
-    # disp_nodes.extend(node_map.noun_nodes)
-
-    for node in disp_nodes:
+    for node in node_map.verb_nodes:
         x, y = random.randint(10, 800), random.randint(10, 800)
         r = 10
         tag = f"{node.uuid}"
-        canvas.create_oval(x-r, y-r, x+r, y+r, fill="blue", outline="#DDD", width=4, tag=tag)
-    
+        canvas.create_oval(x-r, y-r, x+r, y+r, fill="yellow", outline="#DDD", width=4, tag=tag)
+
+    for node in node_map.noun_nodes:
+        x, y = random.randint(10, 800), random.randint(10, 800)
+        r = 10
+        tag = f"{node.uuid}"
+        canvas.create_oval(x-r, y-r, x+r, y+r, fill="green", outline="#DDD", width=4, tag=tag)
+
     root.mainloop()

@@ -4,6 +4,7 @@ import copy
 from node_map import *
 from neuron_class import *
 from place_holder import *
+from printing import *
 
 def find_root_verb(node_map, verb):
     root_verb = False
@@ -107,7 +108,7 @@ def set_of(nodes):
     node_values = []
     nodes_new = []
     for node in nodes:
-        # print(f"{node.value} {node_values}")
+        # debug_print(f"{node.value} {node_values}")
         if node.value not in node_values:
             node_values.append(node.value)
             nodes_new.append(node)
@@ -126,7 +127,7 @@ def add_extra_words(node_map, extra_words):
             continue
         if extra_word in prev_values:
             continue
-        # print(f"Extra word: {extra_word}")
+        debug_print(f"Node {extra_word} with value {extra_word} added")
         n = Neuron(extra_word)
 
         ph_keys = node_map.place_holders.keys()
@@ -152,7 +153,7 @@ def add_extra_words(node_map, extra_words):
         n.text = extra_word
         
         node_map.key_map[extra_word] = n
-
+    
 def inside(big, small, part=False):
     if small in big:
         return True
@@ -178,39 +179,49 @@ def get_verbs_and_nouns(node_map):
     verb_nodes = []
     noun_nodes = []
 
-    pairs = []
-    for key in node_map.get_km_keys():
-        node = node_map.get_km_node(key)
+    for key in node_map.key_map.keys():
+        node = node_map.key_map[key]
+        text = node.text
         value = node.value
+        
+        if value == []:
+            continue
 
-        check_sets = [
-                      (key in node_map.verbs, verb_nodes.append(node)),
-                      # (value in node_map.verbs, noun_nodes.append(node)),
-                      (key in node_map.nouns, noun_nodes.append(node)),
-                      # (value in node_map.nouns, noun_nodes.append(node)),
-                      (is_next_verb(node) and value in node_map.verbs, verb_nodes.append(node)),
-                      (is_next_noun(node), noun_nodes.append(node))]
+        value = value[0]
 
-        for cs in check_sets:
-            check = cs[0]
-            cset = str(cs[1])
-            if check:
-                eval(cset)
+        if text in node_map.verbs:
+            debug_print(f"Key {text} is a verb")
+            verb_nodes.append(node)
+        elif value in node_map.verbs:
+            debug_print(f"Value {value} is a verb")
+            verb_nodes.append(node)
+        elif text in node_map.nouns:
+            debug_print(f"Key {text} is a noun")
+            noun_nodes.append(node)
+        elif value in node_map.nouns:
+            debug_print(f"Key {value} is a noun")
+            noun_nodes.append(node)
+        elif is_next_noun(node):
+            debug_print(f"Key {value} is a generic noun")
+            noun_nodes.append(node)
+        elif is_next_verb(node):
+            debug_print(f"Key {value} is a generic verb")
+            verb_nodes.append(node)
+        else:
+            debug_print(f"Key {text} -> {value} not a verb or noun")
              
+    verb_nodes = cleanup_nodes(verb_nodes)
+    noun_nodes = cleanup_nodes(noun_nodes)
     
-    verb_nodes = set(verb_nodes)
-    
-    verb_nodes = cleanup_verbs(node_map, verb_nodes)
-    # print(f"Verb nodes: {[(x.text, x.value) for x in verb_nodes]}")
     return verb_nodes, noun_nodes
 
-def cleanup_verbs(node_map, verb_nodes):
-    verb_nodes = [x for x in verb_nodes if x.value != []]
-    verb_nodes = [x for x in verb_nodes if len(x.value[0]) != 0]
-    # print(f"{[(x.text, x.value) for x in verb_nodes if x.value[0] in node_map.verbs]}")
-    verb_nodes = [x for x in verb_nodes if x.value[0] in node_map.verbs]
+def cleanup_nodes(nodes):
+    nodes_new = [x for x in nodes if x.value != []]
+    nodes_new = [x for x in nodes_new if len(x.value[0]) != 0]
+    nodes_new = set(nodes_new)
+    nodes_new = set_of(nodes_new)
     
-    return verb_nodes
+    return nodes_new
 
 def set_root_verbs(node_map):
     for key in node_map.get_km_keys():
@@ -218,4 +229,3 @@ def set_root_verbs(node_map):
         root_verb = find_root_verb(node_map, value)
         if root_verb:
             node_map.key_map[key].root_verb = root_verb
-            
