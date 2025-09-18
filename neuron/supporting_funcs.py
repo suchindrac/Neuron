@@ -124,10 +124,14 @@ def add_extra_words(node_map, extra_words):
 
     for extra_word in extra_words:
         if extra_word in prev_keys:
+            prev_node = node_map.get_km_node(extra_word)
+            node_map.cur_neurons.append(prev_node)
             continue
         if extra_word in prev_values:
+            prev_node = node_map.get_node_from_value(extra_word)
+            node_map.cur_neurons.append(prev_node)
             continue
-        debug_print(f"Node {extra_word} with value {extra_word} added")
+        debug_print(f"    Node {extra_word} with value {extra_word} added")
         n = Neuron(extra_word)
 
         ph_keys = node_map.place_holders.keys()
@@ -153,7 +157,8 @@ def add_extra_words(node_map, extra_words):
         n.text = extra_word
         
         node_map.key_map[extra_word] = n
-    
+        node_map.cur_neurons.append(n)
+        
 def inside(big, small, part=False):
     if small in big:
         return True
@@ -179,8 +184,7 @@ def get_verbs_and_nouns(node_map):
     verb_nodes = []
     noun_nodes = []
 
-    for key in node_map.key_map.keys():
-        node = node_map.key_map[key]
+    for node in node_map.cur_neurons:
         text = node.text
         value = node.value
         
@@ -190,25 +194,25 @@ def get_verbs_and_nouns(node_map):
         value = value[0]
 
         if text in node_map.verbs:
-            debug_print(f"Key {text} is a verb")
+            debug_print(f"    Key {text} is a verb")
             verb_nodes.append(node)
         elif value in node_map.verbs:
-            debug_print(f"Value {value} is a verb")
+            debug_print(f"    Value {value} is a verb")
             verb_nodes.append(node)
         elif text in node_map.nouns:
-            debug_print(f"Key {text} is a noun")
+            debug_print(f"    Key {text} is a noun")
             noun_nodes.append(node)
         elif value in node_map.nouns:
-            debug_print(f"Key {value} is a noun")
+            debug_print(f"    Key {value} is a noun")
             noun_nodes.append(node)
-        elif is_next_noun(node):
-            debug_print(f"Key {value} is a generic noun")
-            noun_nodes.append(node)
-        elif is_next_verb(node):
-            debug_print(f"Key {value} is a generic verb")
-            verb_nodes.append(node)
+        # elif is_next_noun(node):
+        #     debug_print(f"    Value {value} is a generic noun")
+        #     noun_nodes.append(node)
+        # elif is_next_verb(node):
+        #     debug_print(f"    Value {value} is a generic verb")
+        #     verb_nodes.append(node)
         else:
-            debug_print(f"Key {text} -> {value} not a verb or noun")
+            debug_print(f"    Key {text} -> {value} not a verb or noun")
              
     verb_nodes = cleanup_nodes(verb_nodes)
     noun_nodes = cleanup_nodes(noun_nodes)

@@ -14,7 +14,7 @@
         "been": {"type": "continuous", "next_is": "verb", "is_a": "verb"},
         "at": {"type": "place", "next_is": "noun"},
         "in": {"type": "location", "next_is": "noun"},
-        "by": {"type": "mode of transport", "next_is": "noun"},
+        "by": {"type": "mode of transport", "next_is": ["noun", "verb"]},
         "every": {"type": "frequency", "next_is": "noun"},
         "to": {"type": "place", "next_is": "noun", "is_a": "verb"},
         "on": {"type": "time", "next_is": ["verb", "noun"]},

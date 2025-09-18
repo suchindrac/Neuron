@@ -46,13 +46,13 @@ class NodeMap:
         return self.key_map.pop(key)
         
     def print_km_data(self):
-        debug_print("Key map data:")
+        debug_print("    Key map data:")
         for key in self.get_km_keys():
             node = self.get_km_node(key)
             debug_print(f"{key}")
 
     def print_ph_data(self):
-        debug_print("Place holder data:")
+        debug_print("    Place holder data:")
         for key in self.get_ph_keys():
             node = self.get_ph_value(key)
             debug_print(f"{key} -> {node.__dict__}")
@@ -76,14 +76,21 @@ class NodeMap:
             return False
 
     def display(self):
-        print("The following connections are created:")
-        for node in self.verb_nodes:
+        print("-> The following nodes are created:")
+        for key in self.get_km_keys():
+            node = self.get_km_node(key)
+            print(f"    {node.text} -> {node.value}")
+        print("-> The following connections are created:")
+        for key in self.get_km_keys():
+            node = self.get_km_node(key)
+            if node.root_verb == None:
+                continue
             text = node.text
             values = node.value
 
             for value in values:
                 conn_nouns = node.conn_nouns
-                to_print = f"<{node.text}> with root verb "
+                to_print = f"    <{node.text}> with root verb "
                 to_print += f"<{node.root_verb}> is connected to:\n"
                 cns_to_display = []
                 for x in conn_nouns:
@@ -93,28 +100,41 @@ class NodeMap:
                         elif type(x.value) == list:
                             cns_to_display.append(x.value[0])
                 cns_to_display = set(cns_to_display)
-                to_print += f"{cns_to_display}"
+                to_print += f"    {cns_to_display}"
                 print(to_print)
 
     def cleanup_neurons(self):
         for key in self.get_km_keys():
             if self.key_map[key].value == []:
                 rem = self.key_map.pop(key)
-                debug_print(f"Key {key} with value {rem} cleaned")
+                debug_print(f"    Key {key} with value {rem} cleaned")
 
+    def get_node_from_value(self, value):
+        for k in self.get_km_keys():
+            if value == self.key_map[k].value:
+                return self.get_km_node(k)
+
+        return False
+    
     def create_neurons_from_text(self, ph_data):
         prev_keys = self.get_km_keys()
         prev_values = [self.key_map[x].value for x in prev_keys]
-        debug_print(f"Place holder data: {ph_data}")
+        debug_print(f"    Place holder data: {ph_data}")
         
         for key in ph_data.keys():
             if ph_data[key] == "":
                 continue
 
             if key in prev_keys:
+                prev_node = self.key_map[key]
+                debug_print(f"Found node {prev_node.text} with key {key}") 
+                self.cur_neurons.append(prev_node)
                 continue
 
             if ph_data[key] in prev_values:
+                prev_node = self.get_node_from_value(ph_data[key])
+                debug_print(f"Found node {prev_node.text} with value {key}")
+                self.cur_neurons.append(prev_node)
                 continue
             
             #
@@ -141,11 +161,16 @@ class NodeMap:
                     setattr(n, 'is_a', "not known")
                     
                 if value != [] and value[0] != "":
-                    debug_print(f"Node {key} with value {value} added")
+                    debug_print(f"    Node {key} with value {value} added")
                     self.key_map[key] = n
-
+                    self.cur_neurons.append(n)
+                    
     def connect_verbs_and_nouns(self):
-        for verb_node in self.verb_nodes:
-            for noun_node in self.noun_nodes:
+        verb_nodes = [x for x in self.cur_neurons if x.root_verb != None]
+        noun_nodes = [x for x in self.cur_neurons if x.root_verb == None]
+        
+        for verb_node in verb_nodes:
+            for noun_node in noun_nodes:
+                debug_print(f"Connecting {verb_node.text} with {noun_node.text}")
                 verb_node.conn_nouns.append(noun_node)
                 noun_node.conn_verbs.append(verb_node)
