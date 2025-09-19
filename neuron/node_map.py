@@ -118,32 +118,28 @@ class NodeMap:
     
     def create_neurons_from_text(self, ph_data):
         prev_keys = self.get_km_keys()
-        prev_values = [self.key_map[x].value for x in prev_keys]
-        debug_print(f"    Place holder data: {ph_data}")
+    
+        print(f"Previous keys: {prev_keys}")
+        debug_print(f"    Place holder data:\n{ph_data}\n")
         
         for key in ph_data.keys():
             if ph_data[key] == "":
                 continue
 
-            if key in prev_keys:
-                prev_node = self.key_map[key]
-                debug_print(f"Found node {prev_node.text} with key {key}") 
-                self.cur_neurons.append(prev_node)
-                continue
-
-            if ph_data[key] in prev_values:
-                prev_node = self.get_node_from_value(ph_data[key])
-                debug_print(f"Found node {prev_node.text} with value {key}")
-                self.cur_neurons.append(prev_node)
-                continue
-            
             #
             # Set the place holder flags for neuron
             #            
             if key in self.place_holders.keys():
                 value = ph_data[key]
 
-                n = Neuron(key)
+                if len(value) != 1:
+                    continue
+
+                if value[0] in prev_keys:
+                    debug_print(f"Node {value[0]} already there")
+                    continue
+
+                n = Neuron(value[0])
                 ph_o = self.place_holders[key]
                 
                 for k in ph_o.__dict__:
@@ -153,7 +149,9 @@ class NodeMap:
                 root_verb = find_root_verb(self, key)
                 if root_verb:
                     setattr(n, 'root_verb', root_verb)
-                setattr(n, 'value', value)
+                    
+                setattr(n, 'text', value[0])
+                setattr(n, 'value', [value[0]])
 
                 try:
                     is_a = getattr(n, 'is_a')
@@ -161,8 +159,8 @@ class NodeMap:
                     setattr(n, 'is_a', "not known")
                     
                 if value != [] and value[0] != "":
-                    debug_print(f"    Node {key} with value {value} added")
-                    self.key_map[key] = n
+                    debug_print(f"    Node {value[0]} with value {value} added")
+                    self.key_map[value[0]] = n
                     self.cur_neurons.append(n)
                     
     def connect_verbs_and_nouns(self):
@@ -173,4 +171,4 @@ class NodeMap:
             for noun_node in noun_nodes:
                 debug_print(f"Connecting {verb_node.text} with {noun_node.text}")
                 verb_node.conn_nouns.append(noun_node)
-                noun_node.conn_verbs.append(verb_node)
+                # noun_node.conn_verbs.append(verb_node)
