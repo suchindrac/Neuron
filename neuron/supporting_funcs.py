@@ -6,6 +6,10 @@ from neuron_class import *
 from place_holder import *
 from printing import *
 
+#
+# The root verb of 'went' is 'go'
+# Find the root verb of a word (verb)
+#
 def find_root_verb(node_map, verb):
     root_verb = False
     for verb_line in node_map.verbs_detailed:
@@ -14,6 +18,9 @@ def find_root_verb(node_map, verb):
             break
     return root_verb
 
+#
+# Read the verbs in english language and the nouns
+#
 def read_verbs_and_nouns():
     fd = open('verbs.txt', 'r')
     reader = csv.reader(fd)
@@ -42,6 +49,9 @@ def read_sentence():
 
     return sentence_orig, words
 
+#
+# Create the place holder map of a sentence
+#
 def create_ph_map(node_map, sentence_orig):
     ph_data = {}
 
@@ -84,6 +94,9 @@ def create_ph_map(node_map, sentence_orig):
 
     return ph_data
 
+#
+# Split the sentence based on a word and read the remaining part
+#
 def read_remaining(sentence, cur_word):
     parts = sentence.split(f" {cur_word} ")
    
@@ -92,6 +105,9 @@ def read_remaining(sentence, cur_word):
     else:
         return False
 
+#
+# Find out words which don't fall under place holder structure
+#
 def identify_extra_words(node_map, sentence_orig):
     sorted_phs = sorted(node_map.get_ph_keys(), key=lambda x: len(x), reverse=True)
     for ph in sorted_phs:
@@ -104,6 +120,9 @@ def identify_extra_words(node_map, sentence_orig):
 
     return sentence_orig
 
+#
+# Create a set from a list of nodes, based on the uniqueness of the values
+#
 def set_of(nodes):
     node_values = []
     nodes_new = []
@@ -115,6 +134,9 @@ def set_of(nodes):
 
     return nodes_new
 
+#
+# Create neurons for the extra words identified and add them
+#
 def add_extra_words(node_map, extra_words):
     extra_words = extra_words.split(" ")
     extra_words = [x.strip() for x in extra_words]
@@ -123,6 +145,11 @@ def add_extra_words(node_map, extra_words):
     prev_values = [node_map.key_map[x].value for x in prev_keys]
 
     for extra_word in extra_words:
+        #
+        # If an extra word is part of a previously defined place holder
+        #  structure for a sentence, then we consider the node previously added
+        #  and ignore it
+        #
         if extra_word in prev_keys:
             prev_node = node_map.get_km_node(extra_word)
             node_map.cur_neurons.append(prev_node)
@@ -132,8 +159,12 @@ def add_extra_words(node_map, extra_words):
             node_map.cur_neurons.append(prev_node)
             continue
         debug_print(f"    Node {extra_word} with value {extra_word} added")
+
         n = Neuron(extra_word)
 
+        #
+        # Set each key-value pair in the place holder structure to the neuron
+        #
         ph_keys = node_map.place_holders.keys()
         if extra_word in ph_keys:
             ph_node = node_map.place_holders[extra_word]
@@ -141,6 +172,9 @@ def add_extra_words(node_map, extra_words):
                 v = getattr(ph_node, k)
                 setattr(n, k, v)
 
+        #
+        # Set additional flags based on whether the word is a verb or a noun
+        #
         n.next_is = ["noun", "verb"]
 
         if extra_word in node_map.verbs:
@@ -152,13 +186,24 @@ def add_extra_words(node_map, extra_words):
         else:
             n.type_of = "noun"
             n.is_a = "noun"
-            
+
+        #
+        # Set the text and value for the word
+        #
         n.value = [extra_word]
         n.text = extra_word
         
         node_map.key_map[extra_word] = n
+
+        #
+        # Update the cur_neurons in node_map for knowning all the words
+        #  that are added as part of current sentence
+        #
         node_map.cur_neurons.append(n)
-        
+
+#
+# Finds out if a small word is part of an element in a list or an element in a list
+#
 def inside(big, small, part=False):
     if small in big:
         return True
@@ -174,12 +219,21 @@ def inside(big, small, part=False):
     
     return False
 
+#
+# Is the next word 'possibly a' noun?
+#
 def is_next_noun(node):
     return inside(node.next_is, "noun")
 
+#
+# Is the next word 'possibly a' verb?
+#
 def is_next_verb(node):
     return inside(node.next_is, "verb")
 
+#
+# Classify the words in the current sentence as verbs and nouns
+#
 def get_verbs_and_nouns(node_map):
     verb_nodes = []
     noun_nodes = []
@@ -219,6 +273,9 @@ def get_verbs_and_nouns(node_map):
     
     return verb_nodes, noun_nodes
 
+#
+# Remove [] and repeated elements
+#
 def cleanup_nodes(nodes):
     nodes_new = [x for x in nodes if x.value != []]
     nodes_new = [x for x in nodes_new if len(x.value[0]) != 0]
@@ -227,6 +284,9 @@ def cleanup_nodes(nodes):
     
     return nodes_new
 
+#
+# Set the root verb for each verb in the key map
+#
 def set_root_verbs(node_map):
     for key in node_map.get_km_keys():
         value = node_map.key_map[key].value[0]

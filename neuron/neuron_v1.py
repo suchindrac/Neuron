@@ -13,22 +13,42 @@ from supporting_funcs import *
 import printing
 
 def process(node_map):
-#     try:
+    try:
         while True:
+            #
+            # Display the prompt
+            #
             sentence_orig = input("> ")
-            
+
+            """ To be handled later
             if re.search("^g .*$", sentence_orig):
                 var_name = sentence_orig.split(" ")[1]
                 display_var(var_name)
                 continue
-
+            """
+            
             words = sentence_orig.split(" ")
             debug_print("-> Creating place holder map")
+
             phs_map = create_ph_map(node_map, sentence_orig)
             debug_print("-> Creating nodes")
+
+            #
+            # Every sentence input has cur_neurons set to []
+            #  at the beginning
+            #
             node_map.cur_neurons = []
+
+            #
+            # Some neurons are created from the place holder map that is parsed on a
+            #  sentence
+            #
             node_map.create_neurons_from_text(phs_map)
 
+            #
+            # Some neurons are created from independent words which are not part of place
+            #  holder structure
+            #
             extra_words = identify_extra_words(node_map, sentence_orig)
             extra_words = extra_words.strip()    
 
@@ -54,12 +74,12 @@ def process(node_map):
             debug_print("-> Writing to pickle file")
             with open("node_map.pkl", "wb") as fd:
                 pickle.dump(node_map, fd)
-"""
+
     except:
         print("Exception hit:")
         print(sys.exc_info())
         sys.exit(1)
-"""
+
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
         if sys.argv[1] == "debug":
