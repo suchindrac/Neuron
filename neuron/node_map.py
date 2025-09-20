@@ -174,9 +174,9 @@ class NodeMap:
 
             #
             # Set the place holder flags for neuron based on rules below:
-            #  a. If the key is in the place holder keys
-            #  b. Note: Temporarily ignore keys which have more than one value
-            #  c. Ignore nodes which are already created in the key map (have a key in the key map)
+            #   a. If the key is in the place holder keys
+            #   b. Note: Temporarily ignore keys which have more than one value
+            #   c. Ignore nodes which are already created in the key map (have a key in the key map)
             #
             if key in self.place_holders.keys():
                 value = ph_data[key]
