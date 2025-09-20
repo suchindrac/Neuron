@@ -110,14 +110,22 @@ def read_remaining(sentence, cur_word):
 #
 def identify_extra_words(node_map, sentence_orig):
     sorted_phs = sorted(node_map.get_ph_keys(), key=lambda x: len(x), reverse=True)
+
     for ph in sorted_phs:
         if ph in sentence_orig:
             sentence_orig = sentence_orig.replace(f" {ph} ", ' ')
-            
+
             if ph in node_map.get_km_keys():
                 value = node_map.key_map[ph].value
+                
                 sentence_orig = sentence_orig.replace(f" {value} ", " ")
 
+    keys = node_map.get_km_keys()
+    nodes = [node_map.get_km_node(key) for key in keys]
+    values = [x.value[0] for x in nodes]
+    for value in values:
+        sentence_orig = sentence_orig.replace(f" {value} ", " ")
+    
     return sentence_orig
 
 #
@@ -219,6 +227,17 @@ def inside(big, small, part=False):
     
     return False
 
+#
+# Delete the dict elements based on value
+#
+def del_dict_elem_by_val(dct, val):
+    dct_copy = copy.copy(dct)
+    
+    for k in dct_copy.keys():
+        if dct_copy[k] == val:
+            del dct[k]
+
+    return dct
 #
 # Is the next word 'possibly a' noun?
 #

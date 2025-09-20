@@ -28,6 +28,8 @@
         "and": {"type": "separator", "next_is": ["verb", "noun"]},
         "before": {"type": "time", "next_is": ["verb", "noun"]},
         "after": {"type": "time", "next_is": ["verb", "noun"]},
-        "now": {"type": "time", "next_is": []}
+        "now": {"type": "time", "next_is": []},
+        "that": {"type": "indicator", "next_is": "noun"},
+        "to that": {"type": "direction indicator", "next_is": "noun"}
     }
 }

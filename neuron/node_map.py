@@ -164,8 +164,8 @@ class NodeMap:
     #
     def create_neurons_from_text(self, ph_data):
         prev_keys = self.get_km_keys()
-    
-        print(f"Previous keys: {prev_keys}")
+
+        debug_print(f"Previous keys: {prev_keys}")
         debug_print(f"    Place holder data:\n{ph_data}\n")
         
         for key in ph_data.keys():

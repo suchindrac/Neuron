@@ -13,7 +13,7 @@ from supporting_funcs import *
 import printing
 
 def process(node_map):
-    try:
+    # try:
         while True:
             #
             # Display the prompt
@@ -75,10 +75,10 @@ def process(node_map):
             with open("node_map.pkl", "wb") as fd:
                 pickle.dump(node_map, fd)
 
-    except:
-        print("Exception hit:")
-        print(sys.exc_info())
-        sys.exit(1)
+    # except:
+    #     print("Exception hit:")
+    #     print(sys.exc_info())
+    #     sys.exit(1)
 
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
