@@ -2,7 +2,10 @@
     "connector definitions":
     {
         "situated at": {"type": "place", "next_is": "noun", "is_a": "verb"},
-        "had been": {"tense": "past_tense", "next_is": ["noun", "verb"], "is_a": "verb"},
+        "had been": {"tense": "past_tense", "next_is": ["noun", "verb"],
+                     "root_verb": "be", "is_a": "verb"},
+        "have been": {"tense": "past_tense", "next_is": ["noun", "verb"], "root_verb": "be"},
+        "had been to": {"tense": "past_tense", "next_is": "noun", "root_verb": "be"},
         "in front of": {"type": "location", "next_is": "noun"},
         "by using": {"type": "mode of transport", "next_is": "noun", "is_a": "verb"},
         "once every": {"type": "frequency", "next_is": "noun"},
@@ -11,7 +14,7 @@
         "I": {"type": "person", "next_is": ["noun", "verb"], "is_a": "noun"}, 
         "will": {"type": "future_tense", "next_is": "verb", "is_a": "verb"},
         "is": {"tense": "present_tense", "next_is": ["noun", "verb"]},
-        "been": {"type": "continuous", "next_is": "verb", "is_a": "verb"},
+        "been": {"type": "continuous", "next_is": "verb", "is_a": "verb", "root_verb": "be"},
         "at": {"type": "place", "next_is": "noun"},
         "in": {"type": "location", "next_is": "noun"},
         "by": {"type": "mode of transport", "next_is": ["noun", "verb"]},
@@ -30,6 +33,9 @@
         "after": {"type": "time", "next_is": ["verb", "noun"]},
         "now": {"type": "time", "next_is": []},
         "that": {"type": "indicator", "next_is": "noun"},
-        "to that": {"type": "direction indicator", "next_is": "noun"}
+        "to that": {"type": "direction indicator", "next_is": "noun"},
+        "as long as": {"type": "time indicator", "next_is": "noun", "tense": "future_tense"},
+        "every day": {"type": "frequency indicator", "next_is": "not applicable",
+                      "frequency": "repeated once every day"}
     }
 }

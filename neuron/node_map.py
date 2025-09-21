@@ -198,22 +198,40 @@ class NodeMap:
                 #
                 # Set the flags in the place holder, to the neuron created
                 #
+
+                #
+                # 'had been' has root verb set to 'be' in JSON
+                # Pick that if it is set, otherwise set it to whatever is set by
+                #  default during instantiation of the class
+                #
+                root_verb_set_in_json = False
+                root_verb_set = ""
                 for k in ph_o.__dict__:
                     v = ph_o.__dict__[k]
+                    if (k == "root_verb") and (v != None):
+                        root_verb_set_in_json = True
+                        root_verb_set = v
                     setattr(n, k, v)
-
+                
                 #
-                # Find the root verb for each key
-                #  and assign it to the 'root_verb' attribute of the neuron class
+                # If the root verb is not set in the JSON, then find the root verb
+                #  for each key and assign it to the 'root_verb' attribute of
+                #  the neuron class
                 #
-                root_verb = find_root_verb(self, key)
-                if root_verb:
-                    setattr(n, 'root_verb', root_verb)
-
+                if not root_verb_set_in_json:
+                    root_verb = find_root_verb(self, key)
+                    if root_verb:
+                        setattr(n, 'root_verb', root_verb)
+    
                 #
                 # Set the text and value for a neuron
+                # NOTE: If root_verb is set, then set that to the 'text' attribute
+                #        of the neuron, otherwise set the 'text' attribute to the value
                 #
-                setattr(n, 'text', value[0])
+                if not root_verb_set_in_json:
+                    setattr(n, 'text', value[0])
+                else:
+                    setattr(n, 'text', root_verb_set)
                 setattr(n, 'value', [value[0]])
 
                 #
