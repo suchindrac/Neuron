@@ -10,7 +10,7 @@
         "by using": {"type": "mode of transport", "next_is": "noun", "is_a": "verb"},
         "once every": {"type": "frequency", "next_is": "noun"},
         "will be": {"type": "future_continuous", "next_is": "verb"},
-        "will": {"type": "future", "next_is": "verb"},
+        "will": {"type": "future", "next_is": "verb", "root_verb": "be"},
         "owned by": {"type": "ownership", "next_is": "noun", "is_a": "verb"},
         "I": {"type": "person", "next_is": ["noun", "verb"], "is_a": "noun"}, 
         "is": {"tense": "present_tense", "next_is": ["noun", "verb"]},
