@@ -5,6 +5,8 @@ import sys
 import json        
 import pickle
 import os
+import readline
+import code
 
 from node_map import *
 from neuron_class import *
@@ -20,18 +22,17 @@ def process(node_map):
             #
             sentence_orig = input("> ")
 
+            if sentence_orig == "shell":
+                variables = globals().copy()
+                variables.update(locals())
+                shell = code.InteractiveConsole(variables)
+                shell.interact()
+                continue
             #
             # * User enters sentence below:
             # I went to house of Athreya situated at Jayanagar
             #  to drink a cup of whiskey on the weekend by bus every week
             #
-            """ To be handled later
-            if re.search("^g .*$", sentence_orig):
-                var_name = sentence_orig.split(" ")[1]
-                display_var(var_name)
-                continue
-            """
-            
             words = sentence_orig.split(" ")
             debug_print("-> Creating place holder map")
 

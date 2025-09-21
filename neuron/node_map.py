@@ -222,7 +222,7 @@ class NodeMap:
                     root_verb = find_root_verb(self, key)
                     if root_verb:
                         setattr(n, 'root_verb', root_verb)
-    
+                        
                 #
                 # Set the text and value for a neuron
                 # NOTE: If root_verb is set, then set that to the 'text' attribute
