@@ -122,7 +122,9 @@ def identify_extra_words(node_map, sentence_orig):
 
     keys = node_map.get_km_keys()
     nodes = [node_map.get_km_node(key) for key in keys]
+    print([f"{x.text} -> {x.value}" for x in nodes])
     values = [x.value[0] for x in nodes]
+
     for value in values:
         sentence_orig = sentence_orig.replace(f" {value} ", " ")
     

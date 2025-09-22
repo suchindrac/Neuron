@@ -251,6 +251,42 @@ class NodeMap:
                     self.key_map[value[0]] = n
                     self.cur_neurons.append(n)
 
+                #
+                # Identify verbs in value and create neurons for them
+                #                
+                add_neurons = []
+                value_words = value[0].split(" ")
+                
+                for word in value_words:
+                    if word in self.verbs:
+                        nobj = Neuron(word)
+                        add_neurons.append(nobj)
+
+                for add_n in add_neurons:
+                    root_verb_set_in_json = False
+                    root_verb_set = ""
+                    for k in ph_o.__dict__:
+                        v = ph_o.__dict__[k]
+                        if (k == "root_verb") and (v != None):
+                            root_verb_set_in_json = True
+                            root_verb_set = v
+                        setattr(add_n, k, v)                    
+
+                    setattr(add_n, 'value', [add_n.text])
+                    
+                    if not root_verb_set_in_json:
+                        root_verb = find_root_verb(self, add_n.value)
+                        if root_verb:
+                            setattr(add_n, 'root_verb', root_verb)
+
+                    try:
+                        is_a = getattr(n, 'is_a')
+                    except:
+                        setattr(add_n, 'is_a', 'not known')
+                    
+                    self.key_map[add_n.text] = add_n
+                    self.cur_neurons.append(add_n)
+
     #
     # Connect the verbs and nouns in the _current sentence added_
     #
